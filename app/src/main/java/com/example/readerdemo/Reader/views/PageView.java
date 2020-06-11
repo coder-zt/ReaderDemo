@@ -141,6 +141,7 @@ public class PageView extends View{
     @Override
     protected void onDraw(Canvas canvas) {
 //        canvas.drawColor(0xFFAAAAAA);
+        Log.d(TAG, "onDraw: " + "update view");
         canvas.drawColor(mBgColor);
         if (mIsRunning) {
             mAnimationProvider.drawMove(canvas);

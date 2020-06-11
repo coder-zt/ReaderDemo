@@ -29,4 +29,12 @@
         android:layout_alignParentBottom="true"
         android:text="获取数据"/>
 
+    <Button
+        android:id="@+id/switch_bar"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="中/英"/>
+
 </RelativeLayout>

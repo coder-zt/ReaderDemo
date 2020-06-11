@@ -6,18 +6,20 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.Rect;
+import android.graphics.pdf.PdfDocument;
 import android.util.Log;
 import android.util.Pair;
 
+import com.example.readerdemo.Reader.Creator.CN_ENGContentCreator;
+import com.example.readerdemo.Reader.Creator.ContentCreator;
+import com.example.readerdemo.Reader.Creator.EnglishContentCreator;
 import com.example.readerdemo.Reader.views.PageView;
 
-import java.util.List;
-
 import static com.example.readerdemo.Reader.Config.CHAPTER_LINE;
-import static com.example.readerdemo.Reader.Config.CONTENT_LINE;
+import static com.example.readerdemo.Reader.Config.CONTENT_CHINESE_LINE;
+import static com.example.readerdemo.Reader.Config.CONTENT_ENGLISH_LINE;
 import static com.example.readerdemo.Reader.Config.TITLE_LINE;
-import static com.example.readerdemo.Reader.Config.getContentPaint;
+import static com.example.readerdemo.Reader.Config.languageModes;
 
 /**
  * 页面工厂
@@ -50,13 +52,11 @@ public class PageFactory {
         mPageView = pageView;
         mActivity = activity;
         mConfig = Config.getInstance();
-        mConfig.setActivity(mActivity);
-        mContentCreator = ContentCreator.getInstance(mActivity);
+        mContentCreator = new CN_ENGContentCreator(mActivity);
         getDrawSize();
         m_fontSize = UIHelper.dp2px(12);
         //获取数据
-        mContentCreator.getChapterData();
-
+//        mContentCreator.getChapterData();
     }
 
 
@@ -72,12 +72,6 @@ public class PageFactory {
             //数据为空
             return;
         }
-//        List<Rect> rects = data.getWordCoordinate();
-//        Paint bgpaint = new Paint();
-//        bgpaint.setColor(Color.GREEN);
-//        for (Rect rect : rects) {
-//            c.drawRect(rect, bgpaint);
-//        }
         if (data.getHeightLightWord() != null) {
             c.drawRect(data.getHeightLightWord(), Config.getTitlePaint());
         }
@@ -95,9 +89,14 @@ public class PageFactory {
                     currentHeight += getLineHeight(paint) + Config.titleLinePadding;
                     c.drawText(integerStringPair.second,mMargin + Config.getPageSize().x/2,currentHeight,paint);
                     break;
-                case CONTENT_LINE:
-                    paint = Config.getContentPaint();
-                    currentHeight += getLineHeight(paint) + Config.contentLinePadding;
+                case CONTENT_ENGLISH_LINE:
+                    paint = Config.getContentEnglishPaint();
+                    currentHeight += getLineHeight(paint) + Config.contentEnglishLinePadding;
+                    c.drawText(integerStringPair.second,mMargin,currentHeight,paint);
+                    break;
+                case CONTENT_CHINESE_LINE:
+                    paint = Config.getContentChinesePaint();
+                    currentHeight += getLineHeight(paint) + Config.contentChineseLinePadding;
                     c.drawText(integerStringPair.second,mMargin,currentHeight,paint);
                     break;
             }
@@ -213,5 +212,26 @@ public class PageFactory {
      */
     private void onPageSwitch(){
         queryClickWord(-1, -1);
+    }
+
+    /**
+     * 当前模式：中文、英文、中英文
+     *
+     * @return
+     */
+    public int switchLanguage() {
+        int i = 0;
+        for (int languageMode : languageModes) {
+            if(languageMode == Config.LanguageMode){
+                PageData data = mContentCreator.getPage(CurrentPage);
+                Config.LanguageMode = languageModes[(i+1)%languageModes.length];
+                mContentCreator.update();
+                onDraw(mPageView.getNextPage(),mContentCreator.getPage(CurrentPage));
+                mPageView.invalidate();
+                return i;
+            }
+            i++;
+        }
+        return -1;
     }
 }

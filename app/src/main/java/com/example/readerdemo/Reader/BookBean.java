@@ -111,7 +111,7 @@ public class BookBean {
      *
      */
 
-    List<ChapterBean> chapterList = new ArrayList<>();
+    public List<ChapterBean> chapterList = new ArrayList<>();
 
 
     /**
@@ -120,7 +120,7 @@ public class BookBean {
     public static class ChapterBean{
         String chapter;
         String title;
-        List<String> pList = new ArrayList<>();
+        public List<String> pList = new ArrayList<>();
 
         public String getChapter() {
             return chapter;

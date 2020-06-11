@@ -10,6 +10,11 @@ import android.graphics.Point;
  */
 public class Config {
 
+    //语言类型
+    public final static int ENG = 1;
+    public final static int CN = 2;
+    public final static int ENG_CN = 0;
+    public final static int[] languageModes = new int[]{ENG_CN, ENG, CN};
     //换页动画的类型
     public final static int PAGE_MODE_SIMULATION = 0;
     public final static int PAGE_MODE_COVER = 1;
@@ -19,7 +24,8 @@ public class Config {
     //每段文字的类型
     public final static int CHAPTER_LINE = 0;
     public final static int TITLE_LINE = 1;
-    public final static int CONTENT_LINE = 2;
+    public final static int CONTENT_ENGLISH_LINE = 2;
+    public final static int CONTENT_CHINESE_LINE = 3;
     //页边距
     public static int margin;
     private static Point mPageSize;
@@ -40,31 +46,42 @@ public class Config {
         Config.titlePaint = titlePaint;
     }
 
-    public static Paint getContentPaint() {
-        return contentPaint;
+    public static Paint getContentEnglishPaint() {
+        return contentEnglishPaint;
     }
 
-    public static void setContentPaint(Paint contentPaint) {
-        Config.contentPaint = contentPaint;
+    public static void setContentEnglishPaint(Paint contentPaint) {
+        Config.contentEnglishPaint = contentPaint;
+    }
+    public static Paint getContentChinesePaint() {
+        return contentChinesePaint;
+    }
+
+    public static void setContentChinesePaint(Paint contentPaint) {
+        Config.contentChinesePaint = contentPaint;
     }
 
     //章节、标题、内容的样式
     //画笔
     private static Paint chapterPaint;
     private static Paint titlePaint;
-    private static Paint contentPaint;
+    private static Paint contentEnglishPaint;
+    private static Paint contentChinesePaint;
     //文字大小
     private static int chapterTextSize = 120;
     private static int titleTextSize = 80;
-    private static int contentTextSize = 50;
+    private static int contentEnglishTextSize = 50;
+    private static int contentChineseTextSize = 50;
     //文字颜色
     private static int chapterColor = Color.BLUE;
     private static int titleColor = Color.GRAY;
-    private static int contentColor = Color.BLACK;
+    private static int contentEnglishColor = Color.BLUE;
+    private static int contentChineseColor = Color.BLACK;
     //文字行间距
     public static int chapterLinePadding = UIHelper.dp2px(20);
     public static int titleLinePadding = UIHelper.dp2px(20);
-    public static int contentLinePadding = UIHelper.dp2px(20);
+    public static int contentEnglishLinePadding = UIHelper.dp2px(20);
+    public static int contentChineseLinePadding = UIHelper.dp2px(20);
 
     private static Config mConfig = null;
     private Config(){
@@ -98,11 +115,17 @@ public class Config {
         titlePaint.setColor(titleColor);// 字体颜色
         titlePaint.setSubpixelText(true);// 设置该项为true，将有助于文本在LCD屏幕上的显示效果
         //内容文章样式
-        contentPaint = new Paint(Paint.ANTI_ALIAS_FLAG);// 画笔
-        contentPaint.setTextAlign(Paint.Align.LEFT);// 左对齐
-        contentPaint.setTextSize(contentTextSize);// 字体大小
-        contentPaint.setColor(contentColor);// 字体颜色
-        contentPaint.setSubpixelText(true);// 设置该项为true，将有助于文本在LCD屏幕上的显示效果
+        contentEnglishPaint = new Paint(Paint.ANTI_ALIAS_FLAG);// 画笔
+        contentEnglishPaint.setTextAlign(Paint.Align.LEFT);// 左对齐
+        contentEnglishPaint.setTextSize(contentEnglishTextSize);// 字体大小
+        contentEnglishPaint.setColor(contentEnglishColor);// 字体颜色
+        contentEnglishPaint.setSubpixelText(true);// 设置该项为true，将有助于文本在LCD屏幕上的显示效果
+        //内容文章样式
+        contentChinesePaint = new Paint(Paint.ANTI_ALIAS_FLAG);// 画笔
+        contentChinesePaint.setTextAlign(Paint.Align.LEFT);// 左对齐
+        contentChinesePaint.setTextSize(contentChineseTextSize);// 字体大小
+        contentChinesePaint.setColor(contentChineseColor);// 字体颜色
+        contentChinesePaint.setSubpixelText(true);// 设置该项为true，将有助于文本在LCD屏幕上的显示效果
     }
 
     public static Point getPageSize() {
@@ -115,10 +138,8 @@ public class Config {
 
 
 
-    public final static int ENG = 1;
-    public final static int CN = 2;
-    public final static int ENG_CN = 0;
-    static int LanguageMode = ENG_CN;
+
+    public static int LanguageMode = ENG;
 
 
     private Activity mActivity;

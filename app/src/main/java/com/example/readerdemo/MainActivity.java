@@ -5,12 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.readerdemo.Reader.PageFactory;
@@ -31,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private View mRootView;
     private float mDownX;
     private float mDownY;
+    private Button mLanguageSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,12 +74,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        mRegionSelectView.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                return false;
-//            }
-//        });
+        mBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPageFactory.getData();
+            }
+        });
+        mLanguageSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int i = mPageFactory.switchLanguage();
+                ((Button)v).setText(String.valueOf(i));
+            }
+        });
     }
 
 
@@ -95,12 +99,7 @@ public class MainActivity extends AppCompatActivity {
         mRootView = findViewById(R.id.root);
         Log.d(TAG, "initView: " + y);
         mBtn = findViewById(R.id.btn);
-//        mBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mPageFactory.getData();
-//            }
-//        });
+        mLanguageSwitch = findViewById(R.id.switch_bar);
         mRegionSelectView = findViewById(R.id.region_view1);
         mP = (PageView)findViewById(R.id.page);
         mPageFactory = new PageFactory(mP, this);

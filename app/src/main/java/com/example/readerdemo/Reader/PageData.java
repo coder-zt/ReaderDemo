@@ -66,16 +66,18 @@ public class PageData {
                         paint = Config.getChapterPaint();
                         padding = Config.chapterLinePadding;
                         break;
-                    case Config.CONTENT_LINE:
-                        paint = Config.getContentPaint();
-                        padding = Config.contentLinePadding;
+                    case Config.CONTENT_ENGLISH_LINE:
+                        paint = Config.getContentEnglishPaint();
+                        padding = Config.contentEnglishLinePadding;
+                        break;
+                    case Config.CONTENT_CHINESE_LINE:
+                        paint = Config.getContentChinesePaint();
+                        padding = Config.contentChineseLinePadding;
                         break;
                     case Config.TITLE_LINE:
                         paint = Config.getTitlePaint();
                         padding = Config.titleLinePadding;
                         break;
-                    default:
-                        throw new IllegalStateException("Unexpected value: " + line.first);
                 }
                 if (mWordCoordinate.size()>0) {
                     Rect rect = mWordCoordinate.get(mWordCoordinate.size()-1);
@@ -94,6 +96,7 @@ public class PageData {
             }
         }
     }
+
 
     private void getWordsCoordinate(Pair<Integer, String> line, Point point, Paint paint, int padding) {
         StringBuilder word = new StringBuilder();
@@ -149,7 +152,7 @@ public class PageData {
             index++;
             if(x > originRect.left && x < originRect.right && y > originRect.top && y < originRect.bottom){
                 mHeightLightWord = new Rect(originRect.left, originRect.top, originRect.right, originRect.bottom);
-                mHeightLightWord.top = mHeightLightWord.top + Config.contentLinePadding;
+                mHeightLightWord.top = mHeightLightWord.top + Config.contentEnglishLinePadding;
                 return mWords.get(index);
             }
         }
