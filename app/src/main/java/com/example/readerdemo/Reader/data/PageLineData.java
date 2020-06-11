@@ -1,7 +1,14 @@
 package com.example.readerdemo.Reader.data;
 
+import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
+import android.util.Log;
 
+import com.example.readerdemo.Reader.Config;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,7 +30,12 @@ public class PageLineData {
     long startIndex;
     long endIndex;
     Rect mLineRect;
-    List<PageSentenceData> sentences;
+    List<PageSentenceData> sentences = new ArrayList<>();
+
+    public PageLineData(long startIndex){
+        this.startIndex = startIndex;
+    }
+
 
     public long getStartIndex() {
         return startIndex;
@@ -57,15 +69,30 @@ public class PageLineData {
         this.sentences = sentences;
     }
 
-    public class PageSentenceData{
+    public static class PageSentenceData{
         //句子的id
         int sentenceId;
         long starTime;
         long endTime;
-        List<String> chineseWords;
-        List<Rect> chineseRectList;
-        List<String> englishWords;
-        List<Rect> englishRectList;
+        String mEnglishString;
+        List<String> chineseWords = new ArrayList<>();
+        List<Rect> chineseRectList = new ArrayList<>();
+        List<String> englishWords = new ArrayList<>();
+        List<Rect> englishRectList = new ArrayList<>();
+
+        public PageSentenceData(int id, long start, long end){
+            sentenceId = id;
+            starTime = start;
+            endTime = end;
+        }
+
+        public String getEnglishString() {
+            return mEnglishString;
+        }
+
+        public void setEnglishString(String englishString) {
+            mEnglishString = englishString;
+        }
 
         public int getSentenceId() {
             return sentenceId;
@@ -121,6 +148,45 @@ public class PageLineData {
 
         public void setEnglishRectList(List<Rect> englishRectList) {
             this.englishRectList = englishRectList;
+        }
+
+
+        public void updateEnglish(Rect lineRect) {
+            Point point = new Point(lineRect.left, lineRect.top);
+            Paint paint = Config.getContentEnglishPaint();//需要按情况调整
+            StringBuilder word = new StringBuilder();
+            int spaceNum = 0;
+            if(mEnglishString.length()>0){
+                spaceNum = 0;
+                for (int i = 0; i < mEnglishString.length(); i++) {
+                    char letter = mEnglishString.charAt(i);
+                    if (letter == ' ') {
+                        if (word != null && word.length() > 0) {
+                            String wordStr = word.toString();
+                            point = getWordCoordinate(wordStr,point, paint, spaceNum);
+                            spaceNum = 0;
+                            word.setLength(0);
+                        }
+                        spaceNum++;
+                    }else{
+                        word.append(letter);
+                    }
+                }
+            }
+            if(word.length()>0){
+                String wordStr = word.toString();
+                getWordCoordinate(wordStr,point, paint, spaceNum);
+            }
+        }
+
+        private Point getWordCoordinate(String wordStr, Point point, Paint paint, int spaceNum) {
+            int left = point.x + Config.getLineWidth(Config.ENG, " ") * spaceNum;
+            int right = point.x + Config.getLineWidth(Config.ENG, wordStr) * spaceNum;
+            int top = point.y;
+            int bottom = point.y + Config.getLineHeight(Config.ENG);
+            englishWords.add(wordStr);
+            englishRectList.add(new Rect(left, top, right, bottom));
+            return new Point(left, top);
         }
     }
 }

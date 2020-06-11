@@ -49,10 +49,11 @@ public class EnglishContentCreator extends ContentCreator {
     }
 
     @Override
-    public void createChapterPages(int currentChapter) {
+    public void createChapterPages(String bookName, int currentChapter) {
         BookBean.ChapterBean chapter = mBookBean.chapterList.get(currentChapter);
         createPage(chapter);
     }
+
 
     public void createPage(BookBean.ChapterBean chapterBean){
         int mVisibleHeight = Config.getPageSize().y;

@@ -2,12 +2,14 @@ package com.example.readerdemo.Reader.Creator;
 
 import android.content.Context;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.Log;
 import android.util.Pair;
 
 import com.example.readerdemo.Reader.Config;
 import com.example.readerdemo.Reader.data.EN_CNBookBean;
 import com.example.readerdemo.Reader.data.PageData;
+import com.example.readerdemo.Reader.data.PageLineData;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,11 +18,9 @@ import org.jsoup.select.Elements;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static com.example.readerdemo.Reader.Config.CONTENT_CHINESE_LINE;
-import static com.example.readerdemo.Reader.Config.CONTENT_ENGLISH_LINE;
 
 public class CN_ENGContentCreator extends ContentCreator {
     private EN_CNBookBean mEN_cnBookBean = new EN_CNBookBean();
@@ -115,61 +115,114 @@ public class CN_ENGContentCreator extends ContentCreator {
 
     @Override
     public void createChapterPages(String bookName, int currentChapter) {
-
         createPages(bookName, currentChapter);
+        updatePages();
     }
 
 
     /**
      * 根据一个章节数据全不转化页面数据并保存再缓存中
-     * @param chapter
+     * @param bookName
+     * @param currentChapter
+     *
      */
     private void createPages(String bookName, int currentChapter) {
+        //开始索引
+        long startIndex = 0;
+        int startTop = 0;
         EN_CNBookBean.ChapterBean chapter = mEN_cnBookBean.getChapterBeans().get(currentChapter);
         int mVisibleHeight = Config.getPageSize().y;
         int mCurrentHeight = 0;
-        Paint englishPaint = Config.getContentEnglishPaint();
-        Paint.FontMetricsInt fmEnglish  =  englishPaint.getFontMetricsInt();
-        int englishHeight = fmEnglish.bottom - fmEnglish.top;
-        Paint chinesePaint = Config.getContentEnglishPaint();
-        Paint.FontMetricsInt fmChinese  =  chinesePaint.getFontMetricsInt();
-        int chineseHeight = fmChinese.bottom - fmChinese.top;
+
         PageData page = new PageData();
         //设置书名
         page.setBookName(bookName);
         //设置章节序号
-        page.setParagraphIndex(currentChapter);
+        page.setChapterIndex(currentChapter);
         for (EN_CNBookBean.ChapterBean.ParagraphBean paragraphBean : chapter.getParagraphBean()) {
-            StringBuilder sbEnglish = new StringBuilder();
-            StringBuilder sbChinese = new StringBuilder();
+            //处理段落数据：存在多个句子
+            //处理流程：不断的新建行加入到pageData的行集合中
+            //还可继续添加字符的行
+            PageLineData canAddWordLine = null;
             for (EN_CNBookBean.ChapterBean.ParagraphBean.SentenceBean
                     sentenceBean : paragraphBean.getSentenceBeans()) {
-                sbEnglish.append(sentenceBean.getEnglish());
-                sbChinese.append(sentenceBean.getChinese());
-            }
-            if(Config.LanguageMode != Config.CN){
-                List<String> pageEnglishLines = splitLineData(sbEnglish.toString(), Config.getContentEnglishPaint(), Config.ENG);
-                for (String pageLine : pageEnglishLines) {
-                    if(mCurrentHeight + Config.chapterLinePadding + englishHeight > mVisibleHeight){
-                        page = setPageCache(page);
-                        mCurrentHeight = 0;
-                    }
-                    page.getPageLine().add(new Pair<>(CONTENT_ENGLISH_LINE,pageLine));
-                    mCurrentHeight+= englishHeight +  Config.chapterLinePadding;
+                //处理句子数据：将句子划分成多个行
+                //处理结果：多个行数据，还剩最后一个行可能可以继续加下一句的句子
+                Log.d(TAG, "createPages: " + sentenceBean.getEnglish());
+                List<PageLineData> lines = sentenceToPageLineData(sentenceBean, startIndex, canAddWordLine, startTop);
+                PageLineData line = lines.get(lines.size()-1);
+                if (isCanAddSentence(line)) {
+                    canAddWordLine = line;
                 }
-            }
-            if(Config.LanguageMode != Config.ENG){
-                List<String> pageChineseLines = splitLineData(sbChinese.toString().trim(), Config.getContentChinesePaint(), Config.CN);
-                    for (String pageLine : pageChineseLines) {
-                        if(mCurrentHeight + Config.chapterLinePadding + chineseHeight > mVisibleHeight){
-                            page = setPageCache(page);
-                            mCurrentHeight = 0;
+                page.setStartIndex(startIndex);
+                for (PageLineData pageLineData : lines) {
+                   int lineHeight = pageLineData.getLineRect().height();
+                    if (mCurrentHeight + lineHeight > mVisibleHeight) {
+                        page.setEndIndex(pageLineData.getEndIndex());
+                        setPageCache(page);
+                    }else{
+                        page.getLines().add(pageLineData);
+                        for (PageLineData.PageSentenceData sentence : pageLineData.getSentences()) {
+                            page.getWords().addAll(sentence.getEnglishWords());
                         }
-                        page.getPageLine().add(new Pair<>(CONTENT_CHINESE_LINE,pageLine));
-                        mCurrentHeight+= chineseHeight +  Config.chapterLinePadding;
+                        mCurrentHeight += lineHeight;
+                    }
                 }
+                startIndex =page.getEndIndex() + 1;
             }
         }
         setPageCache(page);
+    }
+
+    private Boolean isCanAddSentence(PageLineData line) {
+        if(line.getLineRect() == null){
+            return false;
+        }
+        return line.getLineRect().width() < Config.getPageSize().x;
+    }
+
+    //处理句子数据：将句子划分成多个行
+    //处理结果：多个行数据，还剩最后一个行可能可以继续加下一句的句子
+    private List<PageLineData> sentenceToPageLineData(
+            EN_CNBookBean.ChapterBean.ParagraphBean.SentenceBean sentenceBean,
+            long startIndex, PageLineData canAddWordLine, int startTop ) {
+        List<PageLineData> lines = new ArrayList<>();
+        PageLineData operateLine = null;
+        if(canAddWordLine == null){
+            operateLine = new PageLineData(startIndex);
+        }else{
+            operateLine = canAddWordLine;
+        }
+        String englishSentence = sentenceBean.getEnglish();
+        while(englishSentence != null && englishSentence.length()>0){
+            Pair<String, String> englishLines = createEnglishLines(englishSentence,
+                    Config.getContentEnglishPaint());
+            if (isCanAddSentence(operateLine)) {
+                operateLine.setLineRect(new Rect(Config.margin, startTop,
+                        Config.margin + Config.getLineWidth(Config.ENG,englishLines.first) ,
+                        startTop + Config.getLineHeight(Config.ENG)));
+            }else{
+                operateLine.setLineRect(new Rect(Config.margin, startTop,
+                        Config.margin + Config.getPageSize().x ,
+                        startTop + Config.getLineHeight(Config.ENG)));
+
+            }
+            //添加句子
+            PageLineData.PageSentenceData sentenceData = new PageLineData.PageSentenceData(
+                    sentenceBean.getSentenceId(),sentenceBean.getStarTime(),sentenceBean.getEndTime());
+            sentenceData.setEnglishString(englishLines.first);
+            sentenceData.updateEnglish(operateLine.getLineRect());
+            operateLine.getSentences().add(sentenceData);
+            int wordNum = 0;
+            for (PageLineData.PageSentenceData sentence : operateLine.getSentences()) {
+                wordNum += sentence.getEnglishWords().size();
+            }
+            operateLine.setEndIndex(startIndex + wordNum);
+            lines.add(operateLine);
+            operateLine = new PageLineData(operateLine.getEndIndex()+1);
+            englishSentence = englishLines.second;
+        }
+        return lines;
+
     }
 }

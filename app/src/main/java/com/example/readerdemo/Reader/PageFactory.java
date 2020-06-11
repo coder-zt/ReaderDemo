@@ -75,6 +75,9 @@ public class PageFactory {
             c.drawRect(data.getHeightLightWord(), Config.getTitlePaint());
         }
         int currentHeight = 0;
+//        c.drawText(data.getBookName() ,mMargin,100,Config.getChapterPaint());
+        c.drawText(String.valueOf(data.getCurrentPageNum()) ,mMargin,200,Config.getChapterPaint());
+        c.drawText(String.valueOf(data.getTotalPageNum()) ,mMargin,300,Config.getChapterPaint());
         for (Pair<Integer, String> integerStringPair : data.getPageLine()) {
             Paint paint = null;
             switch (integerStringPair.first){
@@ -152,8 +155,8 @@ public class PageFactory {
         //获取数据
         if (mContentCreator != null) {
             mContentCreator.getChapterData();
-            onDraw(mPageView.getCurPage(), getPage(CurrentPage+ 1, true));
-            onDraw(mPageView.getNextPage(), getPage(CurrentPage , true));
+            onDraw(mPageView.getCurPage(), getPage(5, true));
+            onDraw(mPageView.getNextPage(), getPage(6 , true));
         }
     }
 

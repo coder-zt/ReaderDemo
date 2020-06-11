@@ -127,10 +127,10 @@ public class SourceStream {
         if (mCallback != null) {
             switch (type){
                 case Config.ENG:
-                    mCallback.dataCallback("测试英文",englishData, 1);
+                    mCallback.dataCallback("测试英文",englishData, 0);
                     break;
                 case Config.ENG_CN:
-                        mCallback.dataCallback("测试双语", EN_CNData, 1);
+                        mCallback.dataCallback("测试双语", EN_CNData, 0);
                         break;
             }
 

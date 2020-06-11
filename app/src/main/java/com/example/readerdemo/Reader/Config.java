@@ -144,6 +144,55 @@ public class Config {
 
     private Activity mActivity;
 
+    /**
+     * 计算行高
+     * @param type
+     * @return
+     */
+    public static int getLineHeight(int type) {
+        Paint paint = null;
+        int padding = 0;
+        switch (type) {
+            case CN:
+                paint = getContentChinesePaint();
+                padding = contentChineseLinePadding;
+                break;
+            case ENG:
+                paint = getContentEnglishPaint();
+                padding = contentEnglishLinePadding;
+                break;
+           //标题//章节
+        }
+        if(paint != null){
+            Paint.FontMetricsInt fmChinese  =  paint.getFontMetricsInt();
+            return fmChinese.bottom - fmChinese.top + padding;
+        }else{
+            return 0;
+        }
+    }
+
+    public static int getLineWidth(int type, String str) {
+        Paint paint = null;
+        int padding = 0;
+        switch (type) {
+            case CN:
+                paint = getContentChinesePaint();
+                padding = contentChineseLinePadding;
+                break;
+            case ENG:
+                paint = getContentEnglishPaint();
+                padding = contentEnglishLinePadding;
+                break;
+            //标题//章节
+        }
+        if(paint != null){
+
+            return (int) paint.measureText(str);
+        }else{
+            return 0;
+        }
+    }
+
 
     public void setCurrentLanguage(int language) {
         LanguageMode = language;

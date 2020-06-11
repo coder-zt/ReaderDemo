@@ -45,19 +45,19 @@ public class PageData {
     //书名-
     String bookName;
     //章节序号-
-    int paragraphIndex;
+    int mChapterIndex;
     //总页数-
     int totalPageNum;
     //页数-
     int currentPageNum;
-    //开始字符索引
+    //开始字符索引-
     long startIndex;
-    //结束字符索引
+    //结束字符索引-
     long endIndex;
-    //行的集合
-    List<PageLineData> mLines;
+    //行的集合-
+    List<PageLineData> mLines = new ArrayList<>();
     //字符集
-    List<String> mWords;
+    List<String> mWords = new ArrayList<>();
     //标记字符集--
     List<SignWordsBean> mWordsBeans;
 
@@ -69,12 +69,12 @@ public class PageData {
         this.bookName = bookName;
     }
 
-    public int getParagraphIndex() {
-        return paragraphIndex;
+    public int getChapterIndex() {
+        return mChapterIndex;
     }
 
-    public void setParagraphIndex(int paragraphIndex) {
-        this.paragraphIndex = paragraphIndex;
+    public void setChapterIndex(int chapterIndex) {
+        this.mChapterIndex = chapterIndex;
     }
 
     public int getCurrentPageNum() {
@@ -91,6 +91,40 @@ public class PageData {
 
     public void setTotalPageNum(int totalPageNum) {
         this.totalPageNum = totalPageNum;
+    }
+
+    public long getStartIndex() {
+        return startIndex;
+    }
+
+    public void setStartIndex(long startIndex) {
+        this.startIndex = startIndex;
+    }
+
+    public long getEndIndex() {
+        return endIndex;
+    }
+
+    public void setEndIndex(long endIndex) {
+        this.endIndex = endIndex;
+    }
+
+
+
+    public List<PageLineData> getLines() {
+        return mLines;
+    }
+
+    public void setLines(List<PageLineData> lines) {
+        mLines = lines;
+    }
+
+    public List<String> getWords() {
+        return mWords;
+    }
+
+    public void setWords(List<String> words) {
+        mWords = words;
     }
 
     //===================================分割线=======================
