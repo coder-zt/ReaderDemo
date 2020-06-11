@@ -1,4 +1,4 @@
-package com.example.readerdemo.Reader;
+package com.example.readerdemo.Reader.data;
 
 import android.graphics.Paint;
 import android.graphics.Point;
@@ -6,16 +6,66 @@ import android.graphics.Rect;
 import android.util.Log;
 import android.util.Pair;
 
+import com.example.readerdemo.Reader.Config;
+
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * 存储页面的信息
+ * 书名
+ * 章节
+ * 总页数
+ * 页数
+ *
+ * 行的集合
+ *      ->开始索引
+ *      ->结束索引
+ *     ->该行边界
+ *     ->句子的集合
+ *          ->时间戳->高亮
+ *          ->句子id->位置变化后确定其新的位置
+ *          ->英字符合集
+ *             ->字符边界  ->1.点击查询->返回字符索引
+ *                         ->2.范围查询->返回前后字符索引
+ *          ->中文字符合集
+ *              ->字符边界  ->1.点击查询->返回字符索引
+ *                         ->2.范围查询->返回前后字符索引
+ * 开始字符索引
+ * 结束字符索引
+ *
+ *
+ * 标记字符集合
+ *      书名 章节 开始索引 结束索引 样式 注解 ->利用数据库存储本地
+ */
 public class PageData {
 
     public static final String TAG = "PageData";
+    //书名
+    String bookName;
+    //章节序号
+    int paragraphIndex;
+    //总页数
+    int totalPageNum;
+    //页数
+    int currentPageNum;
+    //开始字符索引
+    long startIndex;
+    //结束字符索引
+    long endIndex;
+    //行的集合
+    List<PageLineData> mLines;
+    //字符集
+    List<String> mWords;
+    //标记字符集
+    List<SignWordsBean> mWordsBeans;
+
+
+    public boolean isNoPre;
+    public boolean isNoNext;
+    //
     //所有单词的四周范围
     private List<Rect> mWordCoordinate = new ArrayList<>();
-    private List<String> mWords = new ArrayList<>();
     //单词的高亮的四周
     private List<Rect> heightLight = new ArrayList<>();
     private List<String> mHeightWords = new ArrayList<>();
@@ -37,8 +87,6 @@ public class PageData {
         isNoNext = noNext;
     }
 
-    boolean isNoPre;
-    boolean isNoNext;
     private List<Pair<Integer, String>> pageLine = new ArrayList<>();
 
     public List<Pair<Integer, String>> getPageLine() {

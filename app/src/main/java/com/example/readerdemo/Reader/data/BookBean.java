@@ -1,4 +1,4 @@
-package com.example.readerdemo.Reader;
+package com.example.readerdemo.Reader.data;
 
 import java.util.ArrayList;
 import java.util.List;

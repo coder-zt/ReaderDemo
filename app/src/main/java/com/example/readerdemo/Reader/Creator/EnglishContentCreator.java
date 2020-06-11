@@ -5,9 +5,9 @@ import android.graphics.Paint;
 import android.util.Log;
 import android.util.Pair;
 
-import com.example.readerdemo.Reader.BookBean;
+import com.example.readerdemo.Reader.data.BookBean;
 import com.example.readerdemo.Reader.Config;
-import com.example.readerdemo.Reader.PageData;
+import com.example.readerdemo.Reader.data.PageData;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -21,12 +21,13 @@ import static com.example.readerdemo.Reader.Config.CONTENT_ENGLISH_LINE;
 import static com.example.readerdemo.Reader.Config.TITLE_LINE;
 
 public class EnglishContentCreator extends ContentCreator {
+
     public EnglishContentCreator(Context context){
         super(context, Config.ENG);
     }
 
     @Override
-    protected void handleData(String data) {
+    protected void handleData(String bookName, String data, int chapter) {
         BookBean.ChapterBean chapterBean = new BookBean.ChapterBean();
         mBookBean = new BookBean();
         Document doc = Jsoup.parse(data);

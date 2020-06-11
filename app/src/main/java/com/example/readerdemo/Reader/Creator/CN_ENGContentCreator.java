@@ -5,22 +5,17 @@ import android.graphics.Paint;
 import android.util.Log;
 import android.util.Pair;
 
-import com.example.readerdemo.Reader.BookBean;
 import com.example.readerdemo.Reader.Config;
-import com.example.readerdemo.Reader.EN_CNBookBean;
-import com.example.readerdemo.Reader.PageData;
+import com.example.readerdemo.Reader.data.EN_CNBookBean;
+import com.example.readerdemo.Reader.data.PageData;
 
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Attribute;
-import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,21 +24,39 @@ import static com.example.readerdemo.Reader.Config.CONTENT_ENGLISH_LINE;
 
 public class CN_ENGContentCreator extends ContentCreator {
     private EN_CNBookBean mEN_cnBookBean = new EN_CNBookBean();
-    public CN_ENGContentCreator(Context context) {
+    private static CN_ENGContentCreator instance = null;
+    private CN_ENGContentCreator(Context context) {
         super(context, Config.ENG_CN);
     }
 
+    public synchronized static CN_ENGContentCreator  getInstance(Context context){
+        if(instance == null){
+            synchronized(CN_ENGContentCreator.class){
+                if(instance == null){
+                    instance = new CN_ENGContentCreator(context);
+                }
+            }
+        }
+        return instance;
+    }
     /**
      * 章节结构：
-     * 章：
-     *      段：
-     *              句：start\end\chinese\english
+     * 章：id
+     *      段：id
+     *              句：id\startTime\endTime\chinese\english
      * @param data
      */
     @Override
-    protected void handleData(String data) {
+    protected void handleData(String bookName, String data, int chapterIndex) {
+        int paragraphIndex = 0;
+        int sentenceIndex = 0;
+        //设置书名
+        if (mEN_cnBookBean.getBookName() == null) {
+            mEN_cnBookBean.setBookName(bookName);
+        }
         //创建一章
         EN_CNBookBean.ChapterBean chapterBean = new EN_CNBookBean.ChapterBean();
+        chapterBean.setChapterId(chapterIndex);//设置章节Id
         Document doc = Jsoup.parse(data);
         //遍历段
         Elements paragraphs = doc.getElementsByTag("p");
@@ -52,20 +65,24 @@ public class CN_ENGContentCreator extends ContentCreator {
             //创建一段
             EN_CNBookBean.ChapterBean.ParagraphBean paragraphBean =
                     new EN_CNBookBean.ChapterBean.ParagraphBean();
+            paragraphBean.setParagraphId(paragraphIndex);//设置段落id
             paragraph.id();
             for (Element span : paragraph.getElementsByTag("span")) {
                 //创建一句
                 EN_CNBookBean.ChapterBean.ParagraphBean.SentenceBean sentenceBean =
                     new EN_CNBookBean.ChapterBean.ParagraphBean.SentenceBean();
+                sentenceBean.setSentenceId(sentenceIndex);//设置句子Id
                 sentenceBean.setEnglish(span.text());
                 sentenceBean.setChinese(span.attributes().get("chinese"));
                 sentenceBean.setStarTime(transToLongTime(span.attributes().get("start_time")));
                 sentenceBean.setEndTime(transToLongTime(span.attributes().get("end_time")));
                 //将句保存在段中
                 paragraphBean.getSentenceBeans().add(sentenceBean);
+                sentenceIndex++;
             }
             //段存入章中
             chapterBean.getParagraphBean().add(paragraphBean);
+            paragraphIndex++;
         }
         //保存一章
         mEN_cnBookBean.getChapterBeans().add(chapterBean);
@@ -99,10 +116,15 @@ public class CN_ENGContentCreator extends ContentCreator {
     @Override
     public void createChapterPages(int currentChapter) {
         EN_CNBookBean.ChapterBean chapter = mEN_cnBookBean.getChapterBeans().get(currentChapter);
-        createPage(chapter);
+        createPages(chapter);
     }
 
-    private void createPage(EN_CNBookBean.ChapterBean chapter) {
+
+    /**
+     * 根据一个章节数据全不转化页面数据并保存再缓存中
+     * @param chapter
+     */
+    private void createPages(EN_CNBookBean.ChapterBean chapter) {
         int mVisibleHeight = Config.getPageSize().y;
         int mCurrentHeight = 0;
         Paint englishPaint = Config.getContentEnglishPaint();

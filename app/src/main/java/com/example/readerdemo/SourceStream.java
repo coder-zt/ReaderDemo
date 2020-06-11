@@ -127,10 +127,10 @@ public class SourceStream {
         if (mCallback != null) {
             switch (type){
                 case Config.ENG:
-                    mCallback.dataCallback(englishData);
+                    mCallback.dataCallback("测试英文",englishData, 1);
                     break;
                 case Config.ENG_CN:
-                        mCallback.dataCallback(EN_CNData);
+                        mCallback.dataCallback("测试双语", EN_CNData, 1);
                         break;
             }
 
@@ -144,6 +144,6 @@ public class SourceStream {
 
 
     public interface onDataCallback{
-        void dataCallback(String data);
+        void dataCallback(String bookName, String data, int chapterIndex);
     }
 }

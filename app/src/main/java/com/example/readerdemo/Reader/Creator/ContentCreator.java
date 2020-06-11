@@ -5,14 +5,10 @@ import android.graphics.Paint;
 import android.util.Log;
 import android.util.Pair;
 
-import com.example.readerdemo.Reader.BookBean;
+import com.example.readerdemo.Reader.data.BookBean;
 import com.example.readerdemo.Reader.Config;
-import com.example.readerdemo.Reader.PageData;
+import com.example.readerdemo.Reader.data.PageData;
 import com.example.readerdemo.SourceStream;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,19 +62,20 @@ public abstract class ContentCreator implements SourceStream.onDataCallback {
      * @param data
      */
     @Override
-    public void dataCallback(String data) {
-        handleData(data);
-        createChapterPages(0);
+    public void dataCallback(String bookName, String data, int chapterIndex) {
+        handleData(bookName, data, chapterIndex);
+        createChapterPages(chapterIndex);
     }
 
     /**
      * 将网页数据初步转为章节数据
-     * @param data
+     * @param sourceData 源数据
+     * @param chapterIndex 章的序号
      */
-    protected abstract void handleData(String data);
+    protected abstract void handleData(String bookName, String sourceData, int chapterIndex);
 
     /**
-     * 将章节数据转化为pagedata数据
+     * 将章节数据转化为pageData数据
      */
     public abstract void createChapterPages(int currentChapter);
 

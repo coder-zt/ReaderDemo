@@ -6,13 +6,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.pdf.PdfDocument;
 import android.util.Log;
 import android.util.Pair;
 
 import com.example.readerdemo.Reader.Creator.CN_ENGContentCreator;
 import com.example.readerdemo.Reader.Creator.ContentCreator;
-import com.example.readerdemo.Reader.Creator.EnglishContentCreator;
+import com.example.readerdemo.Reader.data.PageData;
 import com.example.readerdemo.Reader.views.PageView;
 
 import static com.example.readerdemo.Reader.Config.CHAPTER_LINE;
@@ -52,7 +51,7 @@ public class PageFactory {
         mPageView = pageView;
         mActivity = activity;
         mConfig = Config.getInstance();
-        mContentCreator = new CN_ENGContentCreator(mActivity);
+        mContentCreator = CN_ENGContentCreator.getInstance(mActivity);
         getDrawSize();
         m_fontSize = UIHelper.dp2px(12);
         //获取数据

@@ -1,22 +1,35 @@
-package com.example.readerdemo.Reader;
+package com.example.readerdemo.Reader.data;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 章节结构：
- * 章：
- *      段：
- *              句：start\end\chinese\english
+ * 书的数据结构
+ *  书本结构：
+ *  书：书名、章的集合
+ *      章：id\段的集合
+ *          段：id\句子的集合
+ *              句：id\startTime\endTime\chinese\english
  */
 
 /**
  * 双语书
  */
 public class EN_CNBookBean {
+    //书名
+    String bookName;
 
+    //一本书中章的集合
     List<ChapterBean> mChapterBeans = new ArrayList<>();
+
+    public String getBookName() {
+        return bookName;
+    }
+
+    public void setBookName(String bookName) {
+        this.bookName = bookName;
+    }
 
     public List<ChapterBean> getChapterBeans() {
         return mChapterBeans;
@@ -30,7 +43,19 @@ public class EN_CNBookBean {
      * 章
      */
     public static class ChapterBean{
+        //一章中的段的集合
         List<ParagraphBean> mParagraphBean = new ArrayList<>();
+        //章的id
+        int mChapterId;
+
+        public int getChapterId() {
+            return mChapterId;
+        }
+
+        public void setChapterId(int chapterId) {
+            mChapterId = chapterId;
+        }
+
         public List<ParagraphBean> getParagraphBean() {
             return mParagraphBean;
         }
@@ -43,9 +68,11 @@ public class EN_CNBookBean {
          * 段
          */
         public static class ParagraphBean{
-            private  String id;
-
+            //段的id
+            private int paragraphId;
+            //一段中句子的集合
             List<SentenceBean> mSentenceBeans = new ArrayList<>();
+
             public List<SentenceBean> getSentenceBeans() {
                 return mSentenceBeans;
             }
@@ -54,23 +81,32 @@ public class EN_CNBookBean {
                 mSentenceBeans = sentenceBeans;
             }
 
-            public String getId() {
-                return id;
+            public int getParagraphId() {
+                return paragraphId;
             }
 
-            public void setId(String id) {
-                this.id = id;
+            public void setParagraphId(int paragraphId) {
+                this.paragraphId = paragraphId;
             }
 
             /**
-             * 句
+             * 句子
              */
             public static class SentenceBean{
-
+                //句子的id
+                int sentenceId;
                 long starTime;
                 long endTime;
                 String chinese;
                 String english;
+
+                public int getSentenceId() {
+                    return sentenceId;
+                }
+
+                public void setSentenceId(int sentenceId) {
+                    this.sentenceId = sentenceId;
+                }
 
                 public long getStarTime() {
                     return starTime;
