@@ -340,7 +340,10 @@ public class PageView extends View{
         mIsNext = (x - downX) < 0;
         mCancelPage = false;
         if (mIsNext) {//切换至下一页
-            Boolean isNext = mTouchListener.nextPage();
+            Boolean isNext = false;
+            if (mTouchListener != null) {
+                isNext = mTouchListener.nextPage();
+            }
             mAnimationProvider.setDirection(AnimationProvider.Direction.next);
             if (!isNext) {
                 mNoNext = true;

@@ -5,13 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.readerdemo.Reader.PageFactory;
 import com.example.readerdemo.Reader.views.PageView;
-import com.example.readerdemo.Reader.views.RegionSelectView;
+import com.example.readerdemo.Reader.views.SelectView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,33 +27,20 @@ public class MainActivity extends AppCompatActivity {
     private PageView mP;
     private PageFactory mPageFactory;
     private Button mBtn;
-    private RegionSelectView mRegionSelectView;
+    private SelectView mRegionSelectView;
+    private View mRootView;
+    private float mDownX;
+    private float mDownY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+        initEvent();
     }
 
-
-    private void initView() {
-
-        Point outSize = new Point();
-        getWindowManager().getDefaultDisplay().getRealSize(outSize);
-        int x = outSize.x;
-        int y = outSize.y;
-        Log.d(TAG, "initView: " + y);
-        mBtn = findViewById(R.id.btn);
-        mBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPageFactory.getData();
-            }
-        });
-        mRegionSelectView = findViewById(R.id.region_view);
-        mP = (PageView)findViewById(R.id.page);
-        mPageFactory = new PageFactory(mP, this);
+    private void initEvent() {
         mP.setTouchListener(new PageView.TouchListener() {
             @Override
             public void longClick(int x, int y) {
@@ -85,6 +76,34 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this,result, Toast.LENGTH_SHORT).show();
             }
         });
+
+//        mRegionSelectView.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                return false;
+//            }
+//        });
+    }
+
+
+    private void initView() {
+
+        Point outSize = new Point();
+        getWindowManager().getDefaultDisplay().getRealSize(outSize);
+        int x = outSize.x;
+        int y = outSize.y;
+        mRootView = findViewById(R.id.root);
+        Log.d(TAG, "initView: " + y);
+        mBtn = findViewById(R.id.btn);
+//        mBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mPageFactory.getData();
+//            }
+//        });
+        mRegionSelectView = findViewById(R.id.region_view1);
+        mP = (PageView)findViewById(R.id.page);
+        mPageFactory = new PageFactory(mP, this);
     }
 
     @Override

@@ -145,10 +145,11 @@ public class PageData {
 
     public String queryWord(int x, int y) {
         int index = -1;
-        for (Rect rect : mWordCoordinate) {
+        for (Rect originRect : mWordCoordinate) {
             index++;
-            if(x > rect.left && x<rect.right && y > rect.top && y < rect.bottom){
-                mHeightLightWord = rect;
+            if(x > originRect.left && x < originRect.right && y > originRect.top && y < originRect.bottom){
+                mHeightLightWord = new Rect(originRect.left, originRect.top, originRect.right, originRect.bottom);
+                mHeightLightWord.top = mHeightLightWord.top + Config.contentLinePadding;
                 return mWords.get(index);
             }
         }
