@@ -114,9 +114,9 @@ public class CN_ENGContentCreator extends ContentCreator {
     }
 
     @Override
-    public void createChapterPages(int currentChapter) {
-        EN_CNBookBean.ChapterBean chapter = mEN_cnBookBean.getChapterBeans().get(currentChapter);
-        createPages(chapter);
+    public void createChapterPages(String bookName, int currentChapter) {
+
+        createPages(bookName, currentChapter);
     }
 
 
@@ -124,7 +124,8 @@ public class CN_ENGContentCreator extends ContentCreator {
      * 根据一个章节数据全不转化页面数据并保存再缓存中
      * @param chapter
      */
-    private void createPages(EN_CNBookBean.ChapterBean chapter) {
+    private void createPages(String bookName, int currentChapter) {
+        EN_CNBookBean.ChapterBean chapter = mEN_cnBookBean.getChapterBeans().get(currentChapter);
         int mVisibleHeight = Config.getPageSize().y;
         int mCurrentHeight = 0;
         Paint englishPaint = Config.getContentEnglishPaint();
@@ -134,6 +135,10 @@ public class CN_ENGContentCreator extends ContentCreator {
         Paint.FontMetricsInt fmChinese  =  chinesePaint.getFontMetricsInt();
         int chineseHeight = fmChinese.bottom - fmChinese.top;
         PageData page = new PageData();
+        //设置书名
+        page.setBookName(bookName);
+        //设置章节序号
+        page.setParagraphIndex(currentChapter);
         for (EN_CNBookBean.ChapterBean.ParagraphBean paragraphBean : chapter.getParagraphBean()) {
             StringBuilder sbEnglish = new StringBuilder();
             StringBuilder sbChinese = new StringBuilder();

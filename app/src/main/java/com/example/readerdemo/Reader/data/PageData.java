@@ -41,13 +41,14 @@ import java.util.List;
 public class PageData {
 
     public static final String TAG = "PageData";
-    //书名
+
+    //书名-
     String bookName;
-    //章节序号
+    //章节序号-
     int paragraphIndex;
-    //总页数
+    //总页数-
     int totalPageNum;
-    //页数
+    //页数-
     int currentPageNum;
     //开始字符索引
     long startIndex;
@@ -57,9 +58,42 @@ public class PageData {
     List<PageLineData> mLines;
     //字符集
     List<String> mWords;
-    //标记字符集
+    //标记字符集--
     List<SignWordsBean> mWordsBeans;
 
+    public String getBookName() {
+        return bookName;
+    }
+
+    public void setBookName(String bookName) {
+        this.bookName = bookName;
+    }
+
+    public int getParagraphIndex() {
+        return paragraphIndex;
+    }
+
+    public void setParagraphIndex(int paragraphIndex) {
+        this.paragraphIndex = paragraphIndex;
+    }
+
+    public int getCurrentPageNum() {
+        return currentPageNum;
+    }
+
+    public void setCurrentPageNum(int currentPageNum) {
+        this.currentPageNum = currentPageNum;
+    }
+
+    public int getTotalPageNum() {
+        return totalPageNum;
+    }
+
+    public void setTotalPageNum(int totalPageNum) {
+        this.totalPageNum = totalPageNum;
+    }
+
+    //===================================分割线=======================
 
     public boolean isNoPre;
     public boolean isNoNext;

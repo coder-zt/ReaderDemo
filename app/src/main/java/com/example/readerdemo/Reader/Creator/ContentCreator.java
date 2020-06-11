@@ -64,7 +64,7 @@ public abstract class ContentCreator implements SourceStream.onDataCallback {
     @Override
     public void dataCallback(String bookName, String data, int chapterIndex) {
         handleData(bookName, data, chapterIndex);
-        createChapterPages(chapterIndex);
+        createChapterPages(bookName, chapterIndex);
     }
 
     /**
@@ -77,13 +77,24 @@ public abstract class ContentCreator implements SourceStream.onDataCallback {
     /**
      * 将章节数据转化为pageData数据
      */
-    public abstract void createChapterPages(int currentChapter);
+    public abstract void createChapterPages(String bookName, int currentChapter);
 
     PageData setPageCache(PageData pageData) {
+        //设置页数
+        pageData.setCurrentPageNum(mPages.size() + 1);
         mPages.add(pageData);
         Log.d(TAG, "setPageCache: " + mPages.size());
         pageData.update();
         return new PageData();
+    }
+
+    /**
+     * 更新本章总页数
+     */
+    void updatePages(){
+        for (PageData page : mPages) {
+            page.setTotalPageNum(mPages.size());
+        }
     }
 
     public PageData getPage(int page) {
