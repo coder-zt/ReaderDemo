@@ -29,6 +29,7 @@ import java.util.List;
 public class PageLineData {
     long startIndex;
     long endIndex;
+    String lineWords;
     Rect mLineRect;
     List<PageSentenceData> sentences = new ArrayList<>();
 
@@ -68,6 +69,16 @@ public class PageLineData {
     public void setSentences(List<PageSentenceData> sentences) {
         this.sentences = sentences;
     }
+
+    public String getLineWords() {
+        return lineWords;
+    }
+
+    public void setLineWords(String lineWords) {
+        this.lineWords = lineWords;
+    }
+
+
 
     public static class PageSentenceData{
         //句子的id
@@ -151,7 +162,7 @@ public class PageLineData {
         }
 
 
-        public void updateEnglish(Rect lineRect) {
+        public Rect updateEnglish(Rect lineRect) {
             Point point = new Point(lineRect.left, lineRect.top);
             Paint paint = Config.getContentEnglishPaint();//需要按情况调整
             StringBuilder word = new StringBuilder();
@@ -175,18 +186,19 @@ public class PageLineData {
             }
             if(word.length()>0){
                 String wordStr = word.toString();
-                getWordCoordinate(wordStr,point, paint, spaceNum);
+                point = getWordCoordinate(wordStr,point, paint, spaceNum);
             }
+            return new Rect(point.x, point.y,0, 0);
         }
 
         private Point getWordCoordinate(String wordStr, Point point, Paint paint, int spaceNum) {
             int left = point.x + Config.getLineWidth(Config.ENG, " ") * spaceNum;
-            int right = point.x + Config.getLineWidth(Config.ENG, wordStr) * spaceNum;
+            int right = left + Config.getLineWidth(Config.ENG, wordStr);
             int top = point.y;
             int bottom = point.y + Config.getLineHeight(Config.ENG);
             englishWords.add(wordStr);
             englishRectList.add(new Rect(left, top, right, bottom));
-            return new Point(left, top);
+            return new Point(right, top);
         }
     }
 }

@@ -12,6 +12,7 @@ import android.util.Pair;
 import com.example.readerdemo.Reader.Creator.CN_ENGContentCreator;
 import com.example.readerdemo.Reader.Creator.ContentCreator;
 import com.example.readerdemo.Reader.data.PageData;
+import com.example.readerdemo.Reader.data.PageLineData;
 import com.example.readerdemo.Reader.views.PageView;
 
 import static com.example.readerdemo.Reader.Config.CHAPTER_LINE;
@@ -76,33 +77,40 @@ public class PageFactory {
         }
         int currentHeight = 0;
 //        c.drawText(data.getBookName() ,mMargin,100,Config.getChapterPaint());
-        c.drawText(String.valueOf(data.getCurrentPageNum()) ,mMargin,200,Config.getChapterPaint());
-        c.drawText(String.valueOf(data.getTotalPageNum()) ,mMargin,300,Config.getChapterPaint());
-        for (Pair<Integer, String> integerStringPair : data.getPageLine()) {
-            Paint paint = null;
-            switch (integerStringPair.first){
-                case CHAPTER_LINE:
-                    paint = Config.getChapterPaint();
-                    currentHeight += getLineHeight(paint) + Config.chapterLinePadding;
-                    c.drawText(integerStringPair.second,mMargin,currentHeight,paint);
-                    break;
-                case TITLE_LINE:
-                    paint = Config.getTitlePaint();
-                    currentHeight += getLineHeight(paint) + Config.titleLinePadding;
-                    c.drawText(integerStringPair.second,mMargin + Config.getPageSize().x/2,currentHeight,paint);
-                    break;
-                case CONTENT_ENGLISH_LINE:
-                    paint = Config.getContentEnglishPaint();
-                    currentHeight += getLineHeight(paint) + Config.contentEnglishLinePadding;
-                    c.drawText(integerStringPair.second,mMargin,currentHeight,paint);
-                    break;
-                case CONTENT_CHINESE_LINE:
-                    paint = Config.getContentChinesePaint();
-                    currentHeight += getLineHeight(paint) + Config.contentChineseLinePadding;
-                    c.drawText(integerStringPair.second,mMargin,currentHeight,paint);
-                    break;
+//        c.drawText(String.valueOf(data.getCurrentPageNum()) ,mMargin,200,Config.getChapterPaint());
+//        c.drawText(String.valueOf(data.getTotalPageNum()) ,mMargin,300,Config.getChapterPaint());
+        for (PageLineData line : data.getLines()) {
+            StringBuilder sbSentence = new StringBuilder();
+            for (PageLineData.PageSentenceData sentence : line.getSentences()) {
+                sbSentence.append(sentence.getEnglishString());
             }
+                Paint paint = Config.getContentEnglishPaint();
+                c.drawText(sbSentence.toString(), line.getLineRect().left,line.getLineRect().bottom,paint);
         }
+//        for (Pair<Integer, String> integerStringPair : ) {
+//            Paint paint = null;
+//            switch (integerStringPair.first){
+//                case CHAPTER_LINE:
+//                    paint = Config.getChapterPaint();
+//                    currentHeight += getLineHeight(paint) + Config.chapterLinePadding;
+//                    c.drawText(integerStringPair.second,mMargin,currentHeight,paint);
+//                    break;
+//                case TITLE_LINE:
+//                    paint = Config.getTitlePaint();
+//                    currentHeight += getLineHeight(paint) + Config.titleLinePadding;
+//                    c.drawText(integerStringPair.second,mMargin + Config.getPageSize().x/2,currentHeight,paint);
+//                    break;
+//                case CONTENT_ENGLISH_LINE:
+//                    paint = Config.getContentEnglishPaint();
+//                    c.drawText(integerStringPair.second,mMargin,currentHeight,paint);
+//                    break;
+//                case CONTENT_CHINESE_LINE:
+//                    paint = Config.getContentChinesePaint();
+//                    currentHeight += getLineHeight(paint) + Config.contentChineseLinePadding;
+//                    c.drawText(integerStringPair.second,mMargin,currentHeight,paint);
+//                    break;
+//            }
+//        }
 
     }
 
